@@ -78,7 +78,7 @@ function App() {
       document.removeEventListener('keydown', handleKeyPressed);
     };
   }
-  }, [blocos, top, pause]);
+  }, [blocos, top, pause, direcao]);
 
   useEffect(() => {
     if(!pause){
