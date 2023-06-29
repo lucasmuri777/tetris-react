@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import { FaPause, FaPlay, FaRunning, FaRetweet } from "react-icons/fa";
+import ScreenFreeze from './components/ScreenFreeze/ScreenFreeze';
+
 
 const posicoes = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450];
 
@@ -9,48 +12,64 @@ function App() {
   const [blocos, setBlocos] = useState([{ top: -100, left: -100, cor: gerarCorHexAleatoria() }]);
   const [decida, setDecida] = useState(false);
   const [cor, setCor] = useState(gerarCorHexAleatoria)
+  const [pause, setPause] = useState(true)
+  const [perdeu, setPerdeu] = useState(false)
 
   useEffect(() => {
-    const handleKeyPressed = (e) => {
-      let tecla = e.key;
-      switch (tecla) {
-        case 'a':
-          mudarDirecao('a')
-          break;
-        case 'd':
-          mudarDirecao('d')
-          break;
-        case 's':
-          setDecida((prevDecida) => !prevDecida);
-          break;
-        default:
-          break;
-      }
-      function mudarDirecao(dir){
-        let andar = true
-        if(dir === 'a'){
-          for (const e of blocos) {
-            if (e.left === direcao - 50 ) {
-              andar = false
-              break;
+    if(!pause){
+      const handleKeyPressed = (e) => {
+        let tecla = e.key;
+        switch (tecla) {
+          case 'a':
+            mudarDirecao('a')
+            break;
+          case 'd':
+            mudarDirecao('d')
+            break;
+          case 's':
+            setDecida((prevDecida) => !prevDecida);
+            break;
+          default:
+            break;
+        }
+        function mudarDirecao(dir){
+          let andar = true
+          if(dir == 'a'){
+            for (const e of blocos) {
+              if (e.left === direcao - 50 && e.top == top || e.left === direcao - 50 && e.top == top + 50 ) {
+                andar = false
+                break;
+              }
             }
-          }if(andar){
-            setDirecao((prevDirecao) => (prevDirecao >= 50 ? prevDirecao - 50 : 0));
+            if(andar){
+              setDirecao((prevDirecao) => (prevDirecao >= 50 ? prevDirecao - 50 : 0));
             
-          }
-        }
-        if(dir === 'd'){
-          for (const e of blocos) {
-            if (e.left === direcao + 50 ) {
-              andar = false
-              break;
             }
-          }if(andar){
-            setDirecao((prevDirecao) => (prevDirecao < 400 ? prevDirecao + 50 : 450));
+          }
+          if(dir === 'd'){
+            for (const e of blocos) {
+              if (e.left === direcao + 50 && e.top == top || e.left === direcao - 50 && e.top == top + 50 ) {
+                andar = false
+                break;
+              }
+            }if(andar){
+              setDirecao((prevDirecao) => (prevDirecao < 400 ? prevDirecao + 50 : 450));
+            
+            }
           }
         }
-      }
+      
     };
+
+    function Perdeu(){
+      blocos.forEach((e)=>{
+        if(e.top <= 0 && e.top != -100){
+          setPerdeu(true)
+          setPause(true)
+        }
+      })
+    }
+    Perdeu()
 
     
 
@@ -58,15 +77,18 @@ function App() {
     return () => {
       document.removeEventListener('keydown', handleKeyPressed);
     };
-  }, []);
+  }
+  }, [blocos, top, pause]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      addBlocos();
-    }, decida ? 100 : 500);
+    if(!pause){
+      const interval = setInterval(() => {
+        addBlocos();
+      }, decida ? 100 : 500);
 
-    return () => clearInterval(interval);
-  }, [top, decida]);
+      return () => clearInterval(interval);
+    }
+  }, [top, decida, pause]);
 
   function addBlocos() {
     let proximo = top + 50;
@@ -103,11 +125,49 @@ function App() {
     return cor;
   }
 
+  function handlePause(){
+    setPause(!pause)
+  }
+  function handleReset(){
+    setBlocos([{ top: -100, left: -100, cor: gerarCorHexAleatoria() }])
+    setTop(0)
+    setDirecao(posicoes[Math.floor(Math.random() * 10)])
+    setDecida(false)
+    if(perdeu){
+      setPause(false)
+    }else{
+      setPause(true)
+    }
+    setPerdeu(false)
+  }
+
+
   return (
     <div>
       <div id='center'>
-        {decida && <h2>Speed On</h2>}
+        <div className='utilities'>
+          <div className='running-wrapper'>
+            {decida ? (
+              <FaRunning/>
+            ):(<h3>Running off</h3>)}
+          </div>
+          <div className='pause-wrapper'>
+            {pause == true &&(
+              <a className='pause' onClick={handlePause}>{<FaPlay/>}</a>
+              )}
+            {pause == false &&( 
+                <a className='pause' onClick={handlePause}>{<FaPause/>}</a>
+            )}
+          </div>
+          <div className='reset-wrapper'>
+            <a onClick={handleReset}><FaRetweet/></a>
+          </div>
+        </div>
+
         <div className='container'>
+          {pause &&(
+            <ScreenFreeze type={perdeu} clique={handlePause} reset={handleReset}/>
+          )}
           <div className='quadrado' style={{ top: top + 'px', left: direcao + 'px', backgroundColor: cor }}></div>
           {blocos.map((e, index) => (
             <div

@@ -1,0 +1,39 @@
+.ScreenFreeze{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: rgba(29, 29, 29, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 99;
+    padding-bottom: 50px;
+}
+.ScreenFreeze svg{
+    cursor: pointer;
+    font-size: 60px;
+    transition: 0.5s all;
+}
+.ScreenFreeze svg:hover{
+    transform: scale(1.2);
+}
+.loss{
+    background-color: rgba(194, 43, 43, 0.8)!important;
+}
+.item-wrapper{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.item-wrapper *{
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+}
+.item-wrapper h3{
+    font-size: 40px;
+}
+.item-wrapper p{
+    font-size: 20px;
+}
