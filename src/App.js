@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { FaPause, FaPlay, FaRunning, FaRetweet } from "react-icons/fa";
 import ScreenFreeze from './components/ScreenFreeze/ScreenFreeze';
+import Quadrado from './components/Quadrado/Quadrado';
+
+import {  Container, Utilities, Center, Game } from './style.js'
+import Controle from './components/Controle/Controle';
 
 
-const posicoes = [0, 50, 100, 150, 200, 250, 300, 350, 400, 450];
+
+const posicoes = [0, 50, 100, 150, 200, 250, 300, 350, 400];
 
 function App() {
   const [top, setTop] = useState(0);
@@ -15,80 +20,82 @@ function App() {
   const [pause, setPause] = useState(true)
   const [perdeu, setPerdeu] = useState(false)
 
-  useEffect(() => {
-    if(!pause){
-      const handleKeyPressed = (e) => {
-        let tecla = e.key;
-        switch (tecla) {
-          case 'a':
-            mudarDirecao('a')
-            break;
-          case 'd':
-            mudarDirecao('d')
-            break;
-          case 's':
-            setDecida((prevDecida) => !prevDecida);
-            break;
-          default:
-            break;
-        }
-        function mudarDirecao(dir){
-          let andar = true
-          if(dir == 'a'){
-            for (const e of blocos) {
-              if (e.left === direcao - 50 && e.top == top || e.left === direcao - 50 && e.top == top + 50 ) {
-                andar = false
-                break;
-              }
-            }
-            if(andar){
-              setDirecao((prevDirecao) => (prevDirecao >= 50 ? prevDirecao - 50 : 0));
-            
-            }
-          }
-          if(dir === 'd'){
-            for (const e of blocos) {
-              if (e.left === direcao + 50 && e.top == top || e.left === direcao - 50 && e.top == top + 50 ) {
-                andar = false
-                break;
-              }
-            }if(andar){
-              setDirecao((prevDirecao) => (prevDirecao < 400 ? prevDirecao + 50 : 450));
-            
-            }
-          }
-        }
-      
-    };
-
-    function Perdeu(){
-      blocos.forEach((e)=>{
-        if(e.top <= 0 && e.top != -100){
-          setPerdeu(true)
-          setPause(true)
-        }
-      })
+  function handleKeyPressed(e){
+    let tecla = e
+    if(e != 'a' && e != 'd' && e != 's'){
+      tecla = e.key;
+    }    
+    switch (tecla) {
+      case 'a':
+        mudarDirecao('a')
+        break;
+      case 'd':
+        mudarDirecao('d')
+        break;
+      case 's':
+        setDecida((prevDecida) => !prevDecida);
+        break;
+      default:
+        break;
     }
-    Perdeu()
-
     
-
-    document.addEventListener('keydown', handleKeyPressed);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPressed);
-    };
+  };
+  function mudarDirecao(dir){
+    let andar = true
+    if(dir == 'a'){
+      for (const e of blocos) {
+        if (e.left === direcao - 50 && e.top == top || e.left === direcao - 50 && e.top == top + 50 ) {
+          andar = false
+          break;
+        }
+      }
+      if(andar){
+        setDirecao((prevDirecao) => (prevDirecao >= 50 ? prevDirecao - 50 : 0));
+        
+      }
+    }
+    if(dir === 'd'){
+      for (const e of blocos) {
+        if (e.left === direcao + 50 && e.top == top || e.left === direcao + 50 && e.top == top + 50 ) {
+          andar = false
+          break;
+        }
+      }if(andar){
+        setDirecao((prevDirecao) => (prevDirecao < 350 ? prevDirecao + 50 : 400));
+        
+      }
+    }
   }
-  }, [blocos, top, pause, direcao]);
 
   useEffect(() => {
-    if(!pause){
+      if(!pause){
+        
+      
+
+      function Perdeu(){
+        blocos.forEach((e)=>{
+          if(e.top <= 0 && e.top != -100){
+            setPerdeu(true)
+            setPause(true)
+          }
+        })
+      }
+      Perdeu()
+
+      /*descer bloco */
       const interval = setInterval(() => {
         addBlocos();
-      }, decida ? 100 : 500);
+      }, decida ? 100 : 260);
+      
 
-      return () => clearInterval(interval);
+      document.addEventListener('keyup', handleKeyPressed);
+      
+      return () => {
+        document.removeEventListener('keyup', handleKeyPressed);
+        clearInterval(interval);
+      };
     }
-  }, [top, decida, pause]);
+  }, [blocos, top, pause, direcao, decida]);
 
   function addBlocos() {
     let proximo = top + 50;
@@ -105,7 +112,7 @@ function App() {
     });
 
     if (!colocou) {
-      if (top < 650) {
+      if (top < 550) {
         setTop(top + 50);
       } else {
         setBlocos([...blocos, { top: top, left: direcao, cor: cor }]);
@@ -143,42 +150,39 @@ function App() {
 
 
   return (
-    <div>
-      <div id='center'>
-        <div className='utilities'>
-          <div className='running-wrapper'>
-            {decida ? (
-              <FaRunning/>
-            ):(<h3>Running off</h3>)}
-          </div>
-          <div className='pause-wrapper'>
-            {pause == true &&(
-              <a className='pause' onClick={handlePause}>{<FaPlay/>}</a>
+      <Center>
+        <Game>
+          <Utilities>
+            <div>
+              {decida ? (
+                <FaRunning/>
+              ):(<h3>Running off</h3>)}
+            </div>
+            <div>
+              {pause == true &&(
+                <a className='pause' onClick={handlePause}>{<FaPlay/>}</a>
+                )}
+              {pause == false &&( 
+                  <a className='pause' onClick={handlePause}>{<FaPause/>}</a>
               )}
-            {pause == false &&( 
-                <a className='pause' onClick={handlePause}>{<FaPause/>}</a>
-            )}
-          </div>
-          <div className='reset-wrapper'>
-            <a onClick={handleReset}><FaRetweet/></a>
-          </div>
-        </div>
+            </div>
+            <div>
+              <a onClick={handleReset}><FaRetweet/></a>
+            </div>
+          </Utilities>
 
-        <div className='container'>
-          {pause &&(
-            <ScreenFreeze type={perdeu} clique={handlePause} reset={handleReset}/>
-          )}
-          <div className='quadrado' style={{ top: top + 'px', left: direcao + 'px', backgroundColor: cor }}></div>
-          {blocos.map((e, index) => (
-            <div
-              key={index}
-              className='quadrado'
-              style={{ top: e.top + 'px', left: e.left + 'px', backgroundColor: e.cor }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
+          <Container>
+            {pause &&(
+              <ScreenFreeze type={perdeu} clique={handlePause} reset={handleReset}/>
+            )}
+            <Quadrado top={top} left={direcao} cor={cor}/>
+            {blocos.map((e, index) => (
+              <Quadrado index={index} top={e.top} left={e.left} cor={e.cor}/>
+            ))}
+          </Container>
+          <Controle funcao={handleKeyPressed}/>
+        </Game>
+      </Center>
   );
 }
 

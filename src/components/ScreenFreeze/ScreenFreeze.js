@@ -1,29 +1,28 @@
-import styles from './screen.css'
+import { Container, ItemWrapper } from './styles.js'
 
 import { FaPlay, FaSadTear, FaRetweet} from "react-icons/fa";
 
 import { useEffect, useState } from 'react';
 
 export default function ScreenFreeze({type, clique, reset}){
-    const [perdeu, setPerdeu] = useState('pause')
+    const [cor, setCor] = useState('#1d1d1dcc')
     useEffect(()=>{
-        console.log(type)
         if(type){
-            setPerdeu('loss')
+            setCor('#812121cc')
         }
     },[])
     return(
-        <div className={`ScreenFreeze ${perdeu}`}>
+        <Container back={cor}>
             {type ?(
-                <div className='item-wrapper'>
+                <ItemWrapper>
                     <FaSadTear/>
                     <h3>Você Perdeu!</h3>
                     <p>Tente novamente</p>
                     <FaRetweet onClick={reset}/>
-                </div>
+                </ItemWrapper>
             ):(
                 <FaPlay onClick={clique}/>
             )}
-        </div>
+        </Container>
     )
 }
