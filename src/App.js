@@ -69,9 +69,6 @@ function App() {
 
   useEffect(() => {
       if(!pause){
-        
-      
-
       function Perdeu(){
         blocos.forEach((e)=>{
           if(e.top <= 0 && e.top != -100){
@@ -105,7 +102,7 @@ function App() {
       if (e.top === proximo && e.left === direcao) {
         setBlocos([...blocos, { top: top, left: direcao, cor: cor }]);
         setTop(0);
-        setDirecao(posicoes[Math.floor(Math.random() * 10)]);
+        setDirecao(posicoes[Math.floor(Math.random() * 9)]);
         setCor(gerarCorHexAleatoria)
         colocou = true;
       }
@@ -117,7 +114,7 @@ function App() {
       } else {
         setBlocos([...blocos, { top: top, left: direcao, cor: cor }]);
         setTop(0);
-        setDirecao(posicoes[Math.floor(Math.random() * 10)]);
+        setDirecao(posicoes[Math.floor(Math.random() * 9)]);
         setCor(gerarCorHexAleatoria)
       }
     }
@@ -138,7 +135,7 @@ function App() {
   function handleReset(){
     setBlocos([{ top: -100, left: -100, cor: gerarCorHexAleatoria() }])
     setTop(0)
-    setDirecao(posicoes[Math.floor(Math.random() * 10)])
+    setDirecao(posicoes[Math.floor(Math.random() * 9)])
     setDecida(false)
     if(perdeu){
       setPause(false)
@@ -177,7 +174,7 @@ function App() {
             )}
             <Quadrado top={top} left={direcao} cor={cor}/>
             {blocos.map((e, index) => (
-              <Quadrado index={index} top={e.top} left={e.left} cor={e.cor}/>
+              <Quadrado key={index} index={index} top={e.top} left={e.left} cor={e.cor}/>
             ))}
           </Container>
           <Controle funcao={handleKeyPressed}/>
