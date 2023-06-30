@@ -13,7 +13,7 @@ const posicoes = [0, 50, 100, 150, 200, 250, 300, 350, 400];
 
 function App() {
   const [top, setTop] = useState(0);
-  const [direcao, setDirecao] = useState(posicoes[Math.floor(Math.random() * 10)]);
+  const [direcao, setDirecao] = useState(posicoes[Math.floor(Math.random() * 9)]);
   const [blocos, setBlocos] = useState([{ top: -100, left: -100, cor: gerarCorHexAleatoria() }]);
   const [decida, setDecida] = useState(false);
   const [cor, setCor] = useState(gerarCorHexAleatoria)
